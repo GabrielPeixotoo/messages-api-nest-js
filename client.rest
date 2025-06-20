@@ -5,7 +5,7 @@
 ### Lista todos os recados
 GET {{baseUrl}}/messages/?limit={{$randomInt 1 100}}&offset={{$randomInt 0 100}}
 ### Lista apenas um recado
-GET {{baseUrl}}/messages/1
+GET {{baseUrl}}/messages/5
 ### Cria um recado
 POST {{baseUrl}}/messages
 Content-Type: application/json
@@ -31,7 +31,7 @@ Content-Type: application/json
   }
 
 ### Apaga um recado
-DELETE {{baseUrl}}/messages/2
+DELETE {{baseUrl}}/messages/3
 
 ### AppControllerGetHello
 

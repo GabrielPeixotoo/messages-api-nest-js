@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { MessageEntity } from './entities/message.entity';
 
 @Injectable()
@@ -15,12 +15,20 @@ export class MessagesService {
     },
   ];
 
+  throwNotFoundError(message: string) {
+    throw new NotFoundException(message);
+  }
+
   findAll(): MessageEntity[] {
     return this.messages;
   }
 
   findOne(id: number): MessageEntity | undefined {
-    return this.messages.find((item) => item.id === id);
+    const message = this.messages.find((item) => item.id === id);
+
+    if (message) return message;
+
+    this.throwNotFoundError('Message not found');
   }
 
   create(message: MessageEntity): MessageEntity {
@@ -37,15 +45,16 @@ export class MessagesService {
       (item) => item.id === id,
     );
 
-    if (existingMessageIndex >= 0) {
-      const existingMessage = this.messages[existingMessageIndex];
-      this.messages[existingMessageIndex] = {
-        ...existingMessage,
-        ...body,
-      };
-      return this.messages[existingMessageIndex];
+    if (existingMessageIndex < 0) {
+      this.throwNotFoundError('Message to be updated not found');
     }
-    return undefined;
+
+    const existingMessage = this.messages[existingMessageIndex];
+    this.messages[existingMessageIndex] = {
+      ...existingMessage,
+      ...body,
+    };
+    return this.messages[existingMessageIndex];
   }
 
   delete(id: number): number | undefined {
@@ -53,10 +62,11 @@ export class MessagesService {
       (item) => item.id === id,
     );
 
-    if (existingMessageIndex >= 0) {
-      this.messages.splice(existingMessageIndex, 1);
-      return id;
+    if (existingMessageIndex < 0) {
+      this.throwNotFoundError('Message to be deleted not found');
     }
-    return undefined;
+
+    this.messages.splice(existingMessageIndex, 1);
+    return id;
   }
 }
