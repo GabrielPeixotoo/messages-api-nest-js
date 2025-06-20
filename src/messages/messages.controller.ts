@@ -6,25 +6,25 @@ import {
   Param,
   Patch,
   Post,
-  Query,
 } from '@nestjs/common';
-import { MessagesService, PaginationParams } from './messages.service';
+import { MessageEntity } from './entities/message.entity';
+import { MessagesService } from './messages.service';
 
 @Controller('/messages')
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
   @Get()
-  findAll(@Query() pagination: PaginationParams): string {
-    return this.messagesService.findAll(pagination);
+  findAll(): MessageEntity[] {
+    return this.messagesService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): string {
+  findOne(@Param('id') id: string): MessageEntity | undefined {
     return this.messagesService.findOne(Number(id));
   }
 
   @Post()
-  create(@Body() body: object): object {
+  create(@Body() body: MessageEntity): MessageEntity {
     return this.messagesService.create(body);
   }
 
@@ -34,7 +34,7 @@ export class MessagesController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): string {
+  remove(@Param('id') id: string): number | undefined {
     return this.messagesService.delete(Number(id));
   }
 }

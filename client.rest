@@ -5,26 +5,33 @@
 ### Lista todos os recados
 GET {{baseUrl}}/messages/?limit={{$randomInt 1 100}}&offset={{$randomInt 0 100}}
 ### Lista apenas um recado
-GET {{baseUrl}}/messages/{{$randomInt 1 10000}}
+GET {{baseUrl}}/messages/1
 ### Cria um recado
 POST {{baseUrl}}/messages
 Content-Type: application/json
 
-{
-  "recado": "Este é o recado que estou enviando"
-}
+  {
+    "text": "New message",
+    "to": "Joan",
+    "from": "Gabriel",
+    "isRead": false,
+    "date": "2025-06-20T20:52:00.848Z"
+  }
 
 ### Atualiza um recado
-PATCH {{baseUrl}}/messages/{{$randomInt 1 10000}}
+PATCH {{baseUrl}}/messages/2
 Content-Type: application/json
 
-{
-  "recado": "Este é o recado que estou enviando",
-  "atualizar" : true
-}
+  {
+    "text": "Id 2 updated",
+    "to": "Joan",
+    "from": "Gabriel",
+    "isRead": false,
+    "date": "2025-06-20T20:52:00.848Z"
+  }
 
 ### Apaga um recado
-DELETE {{baseUrl}}/messages/{{$randomInt 1 10000}}
+DELETE {{baseUrl}}/messages/2
 
 ### AppControllerGetHello
 
