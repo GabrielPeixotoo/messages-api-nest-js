@@ -3,7 +3,7 @@
 
 #Messages
 ### Lista todos os recados
-GET {{baseUrl}}/messages
+GET {{baseUrl}}/messages/?limit={{$randomInt 1 100}}&offset={{$randomInt 0 100}}
 ### Lista apenas um recado
 GET {{baseUrl}}/messages/{{$randomInt 1 10000}}
 ### Cria um recado

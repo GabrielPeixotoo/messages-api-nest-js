@@ -6,15 +6,16 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
-import { MessagesService } from './messages.service';
+import { MessagesService, PaginationParams } from './messages.service';
 
 @Controller('/messages')
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
   @Get()
-  findAll(): string {
-    return this.messagesService.findAll();
+  findAll(@Query() pagination: PaginationParams): string {
+    return this.messagesService.findAll(pagination);
   }
 
   @Get(':id')
@@ -23,21 +24,17 @@ export class MessagesController {
   }
 
   @Post()
-  create(@Body() body: any): any {
+  create(@Body() body: object): object {
     return this.messagesService.create(body);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() body: any) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return {
-      id,
-      ...body,
-    };
+  update(@Param('id') id: string, @Body() body: object) {
+    return this.messagesService.update(Number(id), body);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string): string {
-    return `apagado recado de ${id}`;
+    return this.messagesService.delete(Number(id));
   }
 }
