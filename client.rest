@@ -1,0 +1,35 @@
+
+@baseUrl = http://localhost:3000
+
+#Messages
+### Lista todos os recados
+GET {{baseUrl}}/messages
+### Lista apenas um recado
+GET {{baseUrl}}/messages/{{$randomInt 1 10000}}
+### Cria um recado
+POST {{baseUrl}}/messages
+Content-Type: application/json
+
+{
+  "recado": "Este é o recado que estou enviando"
+}
+
+### Atualiza um recado
+PATCH {{baseUrl}}/messages/{{$randomInt 1 10000}}
+Content-Type: application/json
+
+{
+  "recado": "Este é o recado que estou enviando",
+  "atualizar" : true
+}
+
+### Apaga um recado
+DELETE {{baseUrl}}/messages/{{$randomInt 1 10000}}
+
+### AppControllerGetHello
+
+# @name AppControllerGetHello
+GET {{baseUrl}}/home/hello
+
+# @name ExemploDeRota
+GET {{baseUrl}}/home/example
