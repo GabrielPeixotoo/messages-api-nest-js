@@ -1,4 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateMessageDto } from './dto/create-message.dto';
+import { UpdateMessageDto } from './dto/update-message.dto';
 import { MessageEntity } from './entities/message.entity';
 
 @Injectable()
@@ -31,16 +33,20 @@ export class MessagesService {
     this.throwNotFoundError('Message not found');
   }
 
-  create(message: MessageEntity): MessageEntity {
+  create(createMessageDto: CreateMessageDto): MessageEntity {
     this.lastId++;
-    message.id = this.lastId;
-    this.messages.push(message);
-    const mostRecentMessage = this.messages[this.lastId - 1];
-    console.log(mostRecentMessage);
-    return mostRecentMessage;
+    const id = this.lastId;
+    const newMessage = {
+      id,
+      ...createMessageDto,
+      isRead: false,
+      date: new Date(),
+    };
+    this.messages.push(newMessage);
+    return newMessage;
   }
 
-  update(id: number, body: object): MessageEntity | undefined {
+  update(id: number, updateMessageDto: UpdateMessageDto): MessageEntity {
     const existingMessageIndex = this.messages.findIndex(
       (item) => item.id === id,
     );
@@ -52,12 +58,12 @@ export class MessagesService {
     const existingMessage = this.messages[existingMessageIndex];
     this.messages[existingMessageIndex] = {
       ...existingMessage,
-      ...body,
+      ...updateMessageDto,
     };
     return this.messages[existingMessageIndex];
   }
 
-  delete(id: number): number | undefined {
+  delete(id: number): number {
     const existingMessageIndex = this.messages.findIndex(
       (item) => item.id === id,
     );

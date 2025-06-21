@@ -11,27 +11,25 @@ POST {{baseUrl}}/messages
 Content-Type: application/json
 
   {
-    "text": "New message",
-    "to": "Joan",
-    "from": "Gabriel",
-    "isRead": false,
-    "date": "2025-06-20T20:52:00.848Z"
+    "text": "New message 3",
+    "to": "dasdsadsadsa",
+    "from": "Gabriel"
   }
 
 ### Atualiza um recado
-PATCH {{baseUrl}}/messages/2
+PATCH {{baseUrl}}/messages/1
 Content-Type: application/json
 
   {
-    "text": "Id 2 updated",
-    "to": "Joan",
+    "text": "Id 4 updated",
+    "to": "zap",
     "from": "Gabriel",
     "isRead": false,
     "date": "2025-06-20T20:52:00.848Z"
   }
 
 ### Apaga um recado
-DELETE {{baseUrl}}/messages/3
+DELETE {{baseUrl}}/messages/1
 
 ### AppControllerGetHello
 

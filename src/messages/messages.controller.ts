@@ -4,9 +4,12 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
 } from '@nestjs/common';
+import { CreateMessageDto } from './dto/create-message.dto';
+import { UpdateMessageDto } from './dto/update-message.dto';
 import { MessageEntity } from './entities/message.entity';
 import { MessagesService } from './messages.service';
 
@@ -24,17 +27,17 @@ export class MessagesController {
   }
 
   @Post()
-  create(@Body() body: MessageEntity): MessageEntity {
-    return this.messagesService.create(body);
+  create(@Body() createMessageDto: CreateMessageDto): MessageEntity {
+    return this.messagesService.create(createMessageDto);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() body: object) {
-    return this.messagesService.update(Number(id), body);
+  update(@Param('id') id: string, @Body() updateMessageDto: UpdateMessageDto) {
+    return this.messagesService.update(Number(id), updateMessageDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): number | undefined {
-    return this.messagesService.delete(Number(id));
+  remove(@Param('id', ParseIntPipe) id: number): number {
+    return this.messagesService.delete(id);
   }
 }
