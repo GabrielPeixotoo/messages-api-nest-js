@@ -11,17 +11,6 @@ export class MessagesService {
     @InjectRepository(MessageEntity)
     private readonly messageRepository: Repository<MessageEntity>,
   ) {}
-  private lastId = 1;
-  private messages: MessageEntity[] = [
-    {
-      id: 1,
-      text: 'This is a test message',
-      to: 'Joan',
-      from: 'Gabriel',
-      isRead: false,
-      date: new Date(),
-    },
-  ];
 
   throwNotFoundError(message: string) {
     throw new NotFoundException(message);
