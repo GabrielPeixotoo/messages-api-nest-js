@@ -17,27 +17,30 @@ import { MessagesService } from './messages.service';
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
   @Get()
-  findAll(): MessageEntity[] {
+  findAll(): Promise<MessageEntity[]> {
     return this.messagesService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): MessageEntity | undefined {
-    return this.messagesService.findOne(Number(id));
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.messagesService.findOne(id);
   }
 
   @Post()
-  create(@Body() createMessageDto: CreateMessageDto): MessageEntity {
+  create(@Body() createMessageDto: CreateMessageDto): Promise<MessageEntity> {
     return this.messagesService.create(createMessageDto);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMessageDto: UpdateMessageDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateMessageDto: UpdateMessageDto,
+  ) {
     return this.messagesService.update(Number(id), updateMessageDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number): number {
+  remove(@Param('id', ParseIntPipe) id: number): Promise<void | MessageEntity> {
     return this.messagesService.delete(id);
   }
 }

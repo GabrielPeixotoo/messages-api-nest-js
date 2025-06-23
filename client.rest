@@ -5,7 +5,7 @@
 ### Lista todos os recados
 GET {{baseUrl}}/messages/?limit={{$randomInt 1 100}}&offset={{$randomInt 0 100}}
 ### Lista apenas um recado
-GET {{baseUrl}}/messages/5
+GET {{baseUrl}}/messages/2
 ### Cria um recado
 POST {{baseUrl}}/messages
 Content-Type: application/json
@@ -17,19 +17,15 @@ Content-Type: application/json
   }
 
 ### Atualiza um recado
-PATCH {{baseUrl}}/messages/1
+PATCH {{baseUrl}}/messages/4
 Content-Type: application/json
 
   {
-    "text": "Id 4 updated",
-    "to": "zap",
-    "from": "Gabriel",
-    "isRead": false,
-    "date": "2025-06-20T20:52:00.848Z"
+    "isRead": false
   }
 
 ### Apaga um recado
-DELETE {{baseUrl}}/messages/1
+DELETE {{baseUrl}}/messages/3
 
 ### AppControllerGetHello
 
