@@ -27,10 +27,31 @@ Content-Type: application/json
 ### Apaga um recado
 DELETE {{baseUrl}}/messages/3
 
-### AppControllerGetHello
 
-# @name AppControllerGetHello
-GET {{baseUrl}}/home/hello
 
-# @name ExemploDeRota
-GET {{baseUrl}}/home/example
+#Messages
+### Lista todos os Usuários
+GET {{baseUrl}}/users/?limit={{$randomInt 1 100}}&offset={{$randomInt 0 100}}
+### Lista apenas um Usuário
+GET {{baseUrl}}/users/2
+### Cria um Usuário
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+  {
+    "name": "Gabriel teste",
+    "email": "a@bc.com",
+    "passwordHash": "654321"
+  }
+
+### Atualiza um recado
+PATCH {{baseUrl}}/users/14
+Content-Type: application/json
+
+  {
+    "email": "a@b.com",
+    "passwordHash": "123456"
+   }
+
+### Apaga um recado
+DELETE {{baseUrl}}/users/3
