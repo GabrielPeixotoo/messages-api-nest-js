@@ -11,7 +11,7 @@ POST {{baseUrl}}/messages
 Content-Type: application/json
 
   {
-    "text": "New message 3",
+    "text": "New message 643234",
     "to": "dasdsadsadsa",
     "from": "Gabriel"
   }
