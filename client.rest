@@ -3,9 +3,9 @@
 
 #Messages
 ### Lista todos os recados
-GET {{baseUrl}}/messages/?limit={{$randomInt 1 100}}&offset={{$randomInt 0 100}}
+GET {{baseUrl}}/messages/?limit=10&offset=0
 ### Lista apenas um recado
-GET {{baseUrl}}/messages/13
+GET {{baseUrl}}/messages/1
 ### Cria um recado
 POST {{baseUrl}}/messages
 Content-Type: application/json
@@ -17,11 +17,11 @@ Content-Type: application/json
   }
 
 ### Atualiza um recado
-PATCH {{baseUrl}}/messages/4
+PATCH {{baseUrl}}/messages/1
 Content-Type: application/json
 
   {
-    "isRead": false
+    "text": "Editei a msgds"
   }
 
 ### Apaga um recado

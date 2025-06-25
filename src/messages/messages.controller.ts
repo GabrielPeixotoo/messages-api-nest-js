@@ -7,7 +7,9 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { MessageEntity } from './entities/message.entity';
@@ -17,8 +19,8 @@ import { MessagesService } from './messages.service';
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
   @Get()
-  findAll(): Promise<MessageEntity[]> {
-    return this.messagesService.findAll();
+  findAll(@Query() paginationDto: PaginationDto): Promise<MessageEntity[]> {
+    return this.messagesService.findAll(paginationDto);
   }
 
   @Get(':id')
