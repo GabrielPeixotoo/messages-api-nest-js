@@ -5,15 +5,15 @@
 ### Lista todos os recados
 GET {{baseUrl}}/messages/?limit={{$randomInt 1 100}}&offset={{$randomInt 0 100}}
 ### Lista apenas um recado
-GET {{baseUrl}}/messages/2
+GET {{baseUrl}}/messages/13
 ### Cria um recado
 POST {{baseUrl}}/messages
 Content-Type: application/json
 
   {
-    "text": "New message 643234",
-    "to": "dasdsadsadsa",
-    "from": "Gabriel"
+    "text": "De gabriel 1 para gabriel 2 e 3",
+    "receiversId": [2, 3],
+    "senderId": 1
   }
 
 ### Atualiza um recado
@@ -25,7 +25,7 @@ Content-Type: application/json
   }
 
 ### Apaga um recado
-DELETE {{baseUrl}}/messages/3
+DELETE {{baseUrl}}/messages/8
 
 
 
@@ -39,8 +39,8 @@ POST {{baseUrl}}/users
 Content-Type: application/json
 
   {
-    "name": "Gabriel teste",
-    "email": "a@bc.com",
+    "name": "Gabriel 3",
+    "email": "a@b.com",
     "passwordHash": "654321"
   }
 
@@ -49,9 +49,9 @@ PATCH {{baseUrl}}/users/14
 Content-Type: application/json
 
   {
-    "email": "a@b.com",
+    "email": "a@bsdaadsds.com",
     "passwordHash": "123456"
    }
 
 ### Apaga um recado
-DELETE {{baseUrl}}/users/3
+DELETE {{baseUrl}}/users/15

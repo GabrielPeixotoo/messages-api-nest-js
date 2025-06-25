@@ -1,10 +1,15 @@
+import { UserEntity } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { MessageReceiverEntity } from './message.receiver.entity';
 
 @Entity('messages')
 export class MessageEntity {
@@ -14,11 +19,17 @@ export class MessageEntity {
   @Column({ type: 'varchar', length: 255 })
   text: string;
 
-  @Column({ type: 'varchar', length: 50 })
-  from: string;
+  //Muitos recados podem ser enviados por uma pessoa.
+  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  // Especifica a coluna 'de' que armazena o id da pessoa que enviou o recado.
+  @JoinColumn({ name: 'from' })
+  from: UserEntity;
 
-  @Column({ type: 'varchar', length: 50 })
-  to: string;
+  @OneToMany(() => MessageReceiverEntity, (receiver) => receiver.message, {
+    cascade: true,
+  })
+  receivers: MessageReceiverEntity[];
+
   @Column({ default: false })
   isRead: boolean;
 
