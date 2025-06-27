@@ -31,7 +31,6 @@ export class MessagesService {
       order: { id: 'desc' },
     });
   }
-
   async findOne(id: number) {
     const message = await this.messageRepository.findOne({
       where: { id },
