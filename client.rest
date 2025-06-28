@@ -4,6 +4,7 @@
 #Messages
 ### Lista todos os recados
 GET {{baseUrl}}/messages/?limit=10&offset=0
+Authorization: Bearer tokenMock
 ### Lista apenas um recado
 GET {{baseUrl}}/messages/1
 ### Cria um recado
