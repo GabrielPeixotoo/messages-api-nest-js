@@ -6,7 +6,7 @@
 GET {{baseUrl}}/messages/?limit=10&offset=0
 Authorization: Bearer tokenMock
 ### Lista apenas um recado
-GET {{baseUrl}}/messages/1
+GET {{baseUrl}}/messages/3
 ### Cria um recado
 POST {{baseUrl}}/messages
 Content-Type: application/json

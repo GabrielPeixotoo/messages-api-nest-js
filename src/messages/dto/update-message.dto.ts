@@ -1,10 +1,4 @@
-import {
-  IsBoolean,
-  IsOptional,
-  IsString,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class UpdateMessageDto {
   @IsOptional()
@@ -12,8 +6,4 @@ export class UpdateMessageDto {
   @MinLength(5)
   @MaxLength(255)
   readonly text?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  readonly isRead?: boolean;
 }

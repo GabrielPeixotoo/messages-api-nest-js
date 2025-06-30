@@ -30,9 +30,6 @@ export class MessageEntity {
   })
   receivers: MessageReceiverEntity[];
 
-  @Column({ default: false })
-  isRead: boolean;
-
   @Column()
   date: Date;
 

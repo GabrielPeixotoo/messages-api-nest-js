@@ -84,7 +84,6 @@ export class MessagesService {
 
     const updatedMessage = this.messageRepository.merge(existingMessage, {
       text: updateMessageDto.text ?? existingMessage.text,
-      isRead: updateMessageDto.isRead ?? existingMessage.isRead,
     });
 
     return this.messageRepository.save(updatedMessage);
