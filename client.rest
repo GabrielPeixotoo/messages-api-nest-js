@@ -12,9 +12,9 @@ POST {{baseUrl}}/messages
 Content-Type: application/json
 
   {
-    "text": "De gabriel 1 para gabriel 2 e 3",
-    "receiversId": [2, 3],
-    "senderId": 1
+    "text": "fsasfsfdadsafdafs",
+    "receiversId": [1, 2],
+    "senderId": 3
   }
 
 ### Atualiza um recado
@@ -45,8 +45,8 @@ Content-Type: application/json
     "passwordHash": "654321"
   }
 
-### Atualiza um recado
-PATCH {{baseUrl}}/users/14
+### Atualiza um User
+PATCH {{baseUrl}}/users/2
 Content-Type: application/json
 
   {
