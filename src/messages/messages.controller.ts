@@ -13,6 +13,7 @@ import {
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { AddHeaderInterceptor } from 'src/common/interceptors/add-header.interceptor';
 import { TimingConnectionInterceptor } from 'src/common/interceptors/timing-connection.interceptor';
+import { UrlParam } from 'src/common/params/url-param.decorator';
 import { ParseIntIdPipe } from 'src/common/pipes/parse-int-id.pipe';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
@@ -25,7 +26,11 @@ import { MessagesService } from './messages.service';
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
   @Get()
-  findAll(@Query() paginationDto: PaginationDto): Promise<MessageEntity[]> {
+  findAll(
+    @Query() paginationDto: PaginationDto,
+    @UrlParam() url: string,
+  ): Promise<MessageEntity[]> {
+    console.log(url);
     return this.messagesService.findAll(paginationDto);
   }
 
