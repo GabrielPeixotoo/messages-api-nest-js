@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   Patch,
   Post,
@@ -15,22 +16,39 @@ import { AddHeaderInterceptor } from 'src/common/interceptors/add-header.interce
 import { TimingConnectionInterceptor } from 'src/common/interceptors/timing-connection.interceptor';
 import { UrlParam } from 'src/common/params/url-param.decorator';
 import { ParseIntIdPipe } from 'src/common/pipes/parse-int-id.pipe';
+import { RegexProtocol } from 'src/common/regex/regex_protocol';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { MessageEntity } from './entities/message.entity';
+import {
+  ONLY_LOWERCASE_REGEX,
+  REMOVE_SPACES_REGEX,
+  SERVER_NAME,
+} from './messages.constants';
 import { MessagesService } from './messages.service';
 
 @Controller('/messages')
 @UsePipes(ParseIntIdPipe)
 @UseInterceptors(AddHeaderInterceptor, TimingConnectionInterceptor)
 export class MessagesController {
-  constructor(private readonly messagesService: MessagesService) {}
+  constructor(
+    private readonly messagesService: MessagesService,
+    @Inject(SERVER_NAME)
+    private readonly serverName: string,
+    @Inject(REMOVE_SPACES_REGEX)
+    private readonly removeSpacesRegex: RegexProtocol,
+    @Inject(ONLY_LOWERCASE_REGEX)
+    private readonly onlyLowercaseRegex: RegexProtocol,
+  ) {}
   @Get()
   findAll(
     @Query() paginationDto: PaginationDto,
     @UrlParam() url: string,
   ): Promise<MessageEntity[]> {
     console.log(url);
+    console.log(this.removeSpacesRegex.execute('Teste da regex'));
+    console.log(this.onlyLowercaseRegex.execute('Teste da regex'));
+    console.log(this.serverName);
     return this.messagesService.findAll(paginationDto);
   }
 
