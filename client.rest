@@ -40,18 +40,17 @@ POST {{baseUrl}}/users
 Content-Type: application/json
 
   {
-    "name": "Gabriel 3",
-    "email": "a@b.com",
-    "passwordHash": "654321"
+    "name": "Gabriel 36",
+    "email": "a@eqwqeweqw.com",
+    "password": "123456"
   }
 
 ### Atualiza um User
-PATCH {{baseUrl}}/users/2
+PATCH {{baseUrl}}/users/16
 Content-Type: application/json
 
   {
-    "email": "a@bsdaadsds.com",
-    "passwordHash": "123456"
+    "password": "123456"
    }
 
 ### Apaga um recado

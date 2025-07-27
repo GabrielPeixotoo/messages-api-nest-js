@@ -4,6 +4,7 @@ import { APP_GUARD } from '@nestjs/core';
 import * as Joi from 'joi';
 
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { AuthModule } from 'src/auth/auth.module';
 import { IsAdminGuard } from 'src/common/guards/is.admin.guard';
 import { MessagesModule } from 'src/messages/messages.module';
 import { UsersModule } from 'src/users/users.module';
@@ -41,6 +42,7 @@ import { AppService } from './app.service';
     }),
     MessagesModule,
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
