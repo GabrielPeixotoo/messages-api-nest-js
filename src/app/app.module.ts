@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import * as Joi from 'joi';
+
 import { IsAdminGuard } from 'src/common/guards/is.admin.guard';
 import { MessagesModule } from 'src/messages/messages.module';
 import { UsersModule } from 'src/users/users.module';
@@ -10,7 +12,18 @@ import { AppService } from './app.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      validationSchema: Joi.object({
+        DATABASE_TYPE: Joi.required(),
+        DATABASE_HOST: Joi.required(),
+        DATABASE_PORT: Joi.number().default(5432),
+        DATABASE_USERNAME: Joi.required(),
+        DATABASE: Joi.required(),
+        DATABASE_PASSWORD: Joi.required(),
+        DATABASE_AUTOLOAD_ENTITIES: Joi.required(),
+        DATABASE_SYNCHRONIZE: Joi.required(),
+      }),
+    }),
     TypeOrmModule.forRoot({
       type: process.env.DATABASE_TYPE as 'postgres',
       host: process.env.DATABASE_HOST,
