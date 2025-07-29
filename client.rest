@@ -41,7 +41,7 @@ Content-Type: application/json
 
   {
     "name": "Gabriel 36",
-    "email": "a@eqwqeweqw.com",
+    "email": "a@a.com",
     "password": "123456"
   }
 
@@ -54,4 +54,14 @@ Content-Type: application/json
    }
 
 ### Apaga um recado
-DELETE {{baseUrl}}/users/15
+DELETE {{baseUrl}}/users/3
+
+#Auth
+### Login
+POST {{baseUrl}}/auth
+Content-Type: application/json
+
+  {
+   "email": "a@a.com",
+   "password": "123456"
+  }
