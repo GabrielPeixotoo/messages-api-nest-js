@@ -9,7 +9,7 @@ import {
   Post,
   Query,
   UseInterceptors,
-  UsePipes
+  UsePipes,
 } from '@nestjs/common';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { AddHeaderInterceptor } from 'src/common/interceptors/add-header.interceptor';

@@ -15,6 +15,7 @@ import { AppService } from './app.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: `.env.${process.env.NODE_ENV ?? 'development'}`,
       load: [appConfig],
       validationSchema: Joi.object({
         DATABASE_TYPE: Joi.required(),
