@@ -1,14 +1,16 @@
 
 @baseUrl = http://localhost:3000
-
+@accessToken = {{authenticate.response.body.accessToken}}
 #Messages
 ### Lista todos os recados
 GET {{baseUrl}}/messages/?limit=10&offset=0
-Authorization: Bearer tokenMock
+Authorization: Bearer {{accessToken}}
 ### Lista apenas um recado
 GET {{baseUrl}}/messages/3
+Authorization: Bearer {{accessToken}}
 ### Cria um recado
 POST {{baseUrl}}/messages
+Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
   {
@@ -33,8 +35,10 @@ DELETE {{baseUrl}}/messages/8
 #Messages
 ### Lista todos os Usuários
 GET {{baseUrl}}/users/?limit={{$randomInt 1 100}}&offset={{$randomInt 0 100}}
+Authorization: Bearer {{accessToken}}
 ### Lista apenas um Usuário
-GET {{baseUrl}}/users/2
+GET {{baseUrl}}/users/14
+Authorization: Bearer {{accessToken}}
 ### Cria um Usuário
 POST {{baseUrl}}/users
 Content-Type: application/json
@@ -46,18 +50,21 @@ Content-Type: application/json
   }
 
 ### Atualiza um User
-PATCH {{baseUrl}}/users/16
+PATCH {{baseUrl}}/users/18
+Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
   {
-    "password": "123456"
+    "name": "Gabriel luiz"
    }
 
 ### Apaga um recado
-DELETE {{baseUrl}}/users/3
+DELETE {{baseUrl}}/users/17
+Authorization: Bearer {{accessToken}}
 
 #Auth
 ### Login
+# @name authenticate
 POST {{baseUrl}}/auth
 Content-Type: application/json
 

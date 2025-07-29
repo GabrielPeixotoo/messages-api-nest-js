@@ -1,9 +1,11 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
 import { HashingService } from 'src/auth/hashing/hash.service';
 import { QueryFailedError, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -67,7 +69,11 @@ export class UsersService {
     return user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(
+    id: number,
+    updateUserDto: UpdateUserDto,
+    tokenPayload: TokenPayloadDto,
+  ) {
     const userData = {
       name: updateUserDto?.name,
     };
@@ -86,18 +92,27 @@ export class UsersService {
     if (!user)
       throw new NotFoundException('Message to be updated was not found');
 
+    if (user.id != tokenPayload.sub) {
+      throw new ForbiddenException(
+        'User is not the one that you are trying to update.',
+      );
+    }
     return await this.userRepository.save(user);
   }
 
-  async remove(id: number) {
-    const person = await this.userRepository.findOneBy({ id });
+  async remove(id: number, tokenPayload: TokenPayloadDto) {
+    const user = await this.userRepository.findOneBy({ id });
 
-    if (!person) {
+    if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    return {
-      message: `User with id ${id} deleted`,
-    };
+    if (user.id != tokenPayload.sub) {
+      throw new ForbiddenException(
+        'User is not the one that you are trying to delete.',
+      );
+    }
+
+    return this.userRepository.remove(user);
   }
 }
