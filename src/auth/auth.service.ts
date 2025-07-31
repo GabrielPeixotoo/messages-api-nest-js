@@ -43,7 +43,7 @@ export class AuthService {
   }
 
   private async createTokens(user: UserEntity) {
-    const accessToken = await this.signJwtAsync(
+    const accessTokenPromise = await this.signJwtAsync(
       user.id,
       this.jwtConfiguration.jwtExpirationTime,
       {
@@ -51,11 +51,15 @@ export class AuthService {
       },
     );
 
-    const refreshToken = await this.signJwtAsync(
+    const refreshTokenPromise = await this.signJwtAsync(
       user.id,
       this.jwtConfiguration.jwtRefreshTtl,
     );
-    console.log(refreshToken);
+
+    const [accessToken, refreshToken] = await Promise.all([
+      accessTokenPromise,
+      refreshTokenPromise,
+    ]);
 
     return {
       accessToken,
