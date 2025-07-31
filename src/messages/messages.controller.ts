@@ -8,9 +8,13 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
+import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
+import { AuthTokenGuard } from 'src/auth/guards/auth-token.guard';
+import { TokenPayloadParam } from 'src/auth/params/token-payload.param';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { AddHeaderInterceptor } from 'src/common/interceptors/add-header.interceptor';
 import { TimingConnectionInterceptor } from 'src/common/interceptors/timing-connection.interceptor';
@@ -47,18 +51,31 @@ export class MessagesController {
     return this.messagesService.findOne(+id);
   }
 
+  @UseGuards(AuthTokenGuard)
   @Post()
-  create(@Body() createMessageDto: CreateMessageDto) {
-    return this.messagesService.create(createMessageDto);
+  create(
+    @Body() createMessageDto: CreateMessageDto,
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
+  ) {
+    return this.messagesService.create(createMessageDto, tokenPayload);
   }
 
+  @UseGuards(AuthTokenGuard)
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateMessageDto: UpdateMessageDto) {
-    return this.messagesService.update(id, updateMessageDto);
+  update(
+    @Param('id') id: number,
+    @Body() updateMessageDto: UpdateMessageDto,
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
+  ) {
+    return this.messagesService.update(id, updateMessageDto, tokenPayload);
   }
 
+  @UseGuards(AuthTokenGuard)
   @Delete(':id')
-  remove(@Param('id') id: number): Promise<void | MessageEntity> {
-    return this.messagesService.delete(id);
+  remove(
+    @Param('id') id: number,
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
+  ): Promise<void | MessageEntity> {
+    return this.messagesService.delete(id, tokenPayload);
   }
 }

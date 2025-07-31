@@ -3,7 +3,6 @@ import {
   IsArray,
   IsInt,
   IsNotEmpty,
-  IsPositive,
   IsString,
   MaxLength,
   MinLength,
@@ -15,9 +14,6 @@ export class CreateMessageDto {
   @MinLength(5)
   @MaxLength(255)
   readonly text: string;
-
-  @IsPositive()
-  senderId: number;
 
   @IsArray()
   @ArrayNotEmpty()

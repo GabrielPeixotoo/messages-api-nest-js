@@ -1,5 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
@@ -42,10 +47,15 @@ export class MessagesService {
     return message;
   }
 
-  async create(createMessageDto: CreateMessageDto): Promise<MessageEntity> {
-    const { senderId, receiversId, text } = createMessageDto;
+  async create(
+    createMessageDto: CreateMessageDto,
+    tokenPayload: TokenPayloadDto,
+  ): Promise<MessageEntity> {
+    const { receiversId, text } = createMessageDto;
 
-    const from = await this.usersService.findOne(senderId);
+    const from = await this.usersService.findOne(tokenPayload.sub);
+    console.log(tokenPayload);
+    console.log(from);
 
     const message = this.messageRepository.create({
       text,
@@ -72,11 +82,16 @@ export class MessagesService {
   async update(
     id: number,
     updateMessageDto: UpdateMessageDto,
+    tokenPayload: TokenPayloadDto,
   ): Promise<MessageEntity> {
     const existingMessage = await this.messageRepository.findOne({
       where: { id },
       relations: ['from', 'receivers'],
     });
+
+    if (existingMessage?.from.id != tokenPayload.sub) {
+      throw new ForbiddenException('This message is not yours');
+    }
 
     if (!existingMessage) {
       throw new NotFoundException('Message to be updated was not found');
@@ -89,12 +104,22 @@ export class MessagesService {
     return this.messageRepository.save(updatedMessage);
   }
 
-  async delete(id: number): Promise<MessageEntity> {
-    const message = await this.messageRepository.findOneBy({ id });
+  async delete(
+    id: number,
+    tokenPayload: TokenPayloadDto,
+  ): Promise<MessageEntity> {
+    const existingMessage = await this.messageRepository.findOne({
+      where: { id },
+      relations: ['from', 'receivers'],
+    });
 
-    if (!message)
+    if (!existingMessage)
       throw new NotFoundException('Message to be deleted was not found');
 
-    return this.messageRepository.remove(message);
+    if (existingMessage?.from.id != tokenPayload.sub) {
+      throw new ForbiddenException('This message is not yours');
+    }
+
+    return this.messageRepository.remove(existingMessage);
   }
 }

@@ -6,6 +6,8 @@ import { UserEntity } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import jwtConfig from './config/jwt.config';
 import { LoginDto } from './dto/login.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { TokenPayloadDto } from './dto/token-payload.dto';
 import { HashingService } from './hashing/hash.service';
 
 @Injectable()
@@ -37,21 +39,67 @@ export class AuthService {
       throw new UnauthorizedException('User or password invalid');
     }
 
-    const accessToken = await this.jwtService.signAsync(
+    return this.createTokens(user);
+  }
+
+  private async createTokens(user: UserEntity) {
+    const accessToken = await this.signJwtAsync(
+      user.id,
+      this.jwtConfiguration.jwtExpirationTime,
       {
-        sub: user.id,
         email: user.email,
+      },
+    );
+
+    const refreshToken = await this.signJwtAsync(
+      user.id,
+      this.jwtConfiguration.jwtRefreshTtl,
+    );
+    console.log(refreshToken);
+
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  private async signJwtAsync<T>(sub: number, expiresIn: number, payload?: T) {
+    return await this.jwtService.signAsync(
+      {
+        sub: sub,
+        ...payload,
       },
       {
         audience: this.jwtConfiguration.audience,
         issuer: this.jwtConfiguration.issuer,
         secret: this.jwtConfiguration.secret,
-        expiresIn: this.jwtConfiguration.jwtExpirationTime,
+        expiresIn: expiresIn,
       },
     );
+  }
 
-    return {
-      accessToken,
-    };
+  async refreshTokens(refreshTokenDto: RefreshTokenDto) {
+    try {
+      const payload: TokenPayloadDto = await this.jwtService.verifyAsync(
+        refreshTokenDto.refreshToken,
+        this.jwtConfiguration,
+      );
+
+      const user = await this.userRepository.findOneBy({
+        id: payload.sub,
+      });
+
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      return this.createTokens(user);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new UnauthorizedException(error.message);
+      }
+
+      throw new UnauthorizedException('Unknown error occurred');
+    }
   }
 }
