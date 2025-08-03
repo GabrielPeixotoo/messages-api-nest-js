@@ -24,10 +24,11 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     const user = await this.userRepository.findOneBy({
       email: loginDto.email,
+      active: true,
     });
 
     if (!user) {
-      throw new UnauthorizedException('User does not exist');
+      throw new UnauthorizedException('User not authorized');
     }
 
     const isPasswordValid = await this.hashingService.compare(
@@ -43,7 +44,7 @@ export class AuthService {
   }
 
   private async createTokens(user: UserEntity) {
-    const accessTokenPromise = await this.signJwtAsync(
+    const accessTokenPromise = this.signJwtAsync(
       user.id,
       this.jwtConfiguration.jwtExpirationTime,
       {
@@ -51,7 +52,7 @@ export class AuthService {
       },
     );
 
-    const refreshTokenPromise = await this.signJwtAsync(
+    const refreshTokenPromise = this.signJwtAsync(
       user.id,
       this.jwtConfiguration.jwtRefreshTtl,
     );
@@ -91,10 +92,11 @@ export class AuthService {
 
       const user = await this.userRepository.findOneBy({
         id: payload.sub,
+        active: true,
       });
 
       if (!user) {
-        throw new Error('User not found');
+        throw new UnauthorizedException('User not authorized');
       }
 
       return this.createTokens(user);

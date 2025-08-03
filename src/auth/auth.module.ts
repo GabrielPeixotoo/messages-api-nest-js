@@ -24,6 +24,6 @@ import { HashingService } from './hashing/hash.service';
     },
     AuthService,
   ],
-  exports: [HashingService, JwtModule, ConfigModule],
+  exports: [HashingService, JwtModule, ConfigModule, TypeOrmModule],
 })
 export class AuthModule {}

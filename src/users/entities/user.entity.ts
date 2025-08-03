@@ -37,4 +37,7 @@ export class UserEntity {
 
   @OneToMany(() => MessageReceiverEntity, (message) => message.receiver)
   receivedMessages: MessageReceiverEntity[];
+
+  @Column({ default: true })
+  active: boolean;
 }
