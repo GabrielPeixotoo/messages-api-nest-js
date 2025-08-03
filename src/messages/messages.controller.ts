@@ -12,13 +12,16 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
+import { SetRoutePolicy } from 'src/auth/decorators/set-route-policy.decorator';
 import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
+import { RoutePolicies } from 'src/auth/enum/route-policies.enum';
 import { AuthTokenGuard } from 'src/auth/guards/auth-token.guard';
+import { RoutePolicyGuard } from 'src/auth/guards/route-policy.guard';
 import { TokenPayloadParam } from 'src/auth/params/token-payload.param';
+import { UrlParam } from 'src/common/decorators/url-param.decorator';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { AddHeaderInterceptor } from 'src/common/interceptors/add-header.interceptor';
 import { TimingConnectionInterceptor } from 'src/common/interceptors/timing-connection.interceptor';
-import { UrlParam } from 'src/common/params/url-param.decorator';
 import { ParseIntIdPipe } from 'src/common/pipes/parse-int-id.pipe';
 import { RemoveSpacesRegex } from 'src/common/regex/remove-spaces.regex';
 import { CreateMessageDto } from './dto/create-message.dto';
@@ -30,6 +33,7 @@ import { MessagesService } from './messages.service';
 @Controller('/messages')
 @UsePipes(ParseIntIdPipe)
 @UseInterceptors(AddHeaderInterceptor, TimingConnectionInterceptor)
+@UseGuards(RoutePolicyGuard)
 export class MessagesController {
   constructor(
     private readonly messagesService: MessagesService,
@@ -37,6 +41,7 @@ export class MessagesController {
     private readonly removeSpacesRegex: RemoveSpacesRegex,
   ) {}
   @Get()
+  @SetRoutePolicy(RoutePolicies.findAllMessages)
   findAll(
     @Query() paginationDto: PaginationDto,
     @UrlParam() url: string,

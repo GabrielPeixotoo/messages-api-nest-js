@@ -11,9 +11,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Request } from 'express';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
+import { REQUEST_TOKEN_PAYLOAD_KEY } from '../auth.constants';
 import jwtConfig from '../config/jwt.config';
 import { TokenPayloadDto } from '../dto/token-payload.dto';
-import { REQUEST_TOKEN_PAYLOAD_KEY } from '../hashing/auth.constants';
 
 @Injectable()
 export class AuthTokenGuard implements CanActivate {
