@@ -7,8 +7,13 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { writeFile } from 'fs/promises';
+import * as path from 'path';
 import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
 import { AuthTokenGuard } from 'src/auth/guards/auth-token.guard';
 import { TokenPayloadParam } from 'src/auth/params/token-payload.param';
@@ -52,5 +57,34 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.usersService.remove(id, tokenPayload);
+  }
+
+  @UseGuards(AuthTokenGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  @Post('upload-picture')
+  async uploadPicture(
+    @UploadedFile() file: Express.Multer.File,
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
+  ) {
+    const mimeType = file.mimetype;
+    const fileExtension = path
+      .extname(file.originalname)
+      .toLowerCase()
+      .substring(1);
+    console.log(mimeType);
+    console.log(fileExtension);
+
+    const fileName = `${tokenPayload.sub}.${fileExtension}`;
+    console.log(fileName);
+    const fileFullPath = path.resolve(process.cwd(), 'pictures', fileName);
+    console.log(fileFullPath);
+
+    await writeFile(fileFullPath, file.buffer);
+    return {
+      fieldname: file.fieldname,
+      originalname: file.originalname,
+      mimeType: file.mimetype,
+      size: file.size,
+    };
   }
 }
