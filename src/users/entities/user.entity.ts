@@ -23,6 +23,9 @@ export class UserEntity {
   @Column({ length: 100 })
   name: string;
 
+  @Column({ default: '' })
+  picture: string;
+
   @Column({ length: 255 })
   passwordHash: string;
 

@@ -3,7 +3,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import * as Joi from 'joi';
 
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { resolve } from 'path';
 import { AuthModule } from 'src/auth/auth.module';
 import { IsAdminGuard } from 'src/common/guards/is.admin.guard';
 import { MessagesModule } from 'src/messages/messages.module';
@@ -40,6 +42,10 @@ import { AppService } from './app.service';
           ...typeOrmConfig,
         };
       },
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: resolve(process.cwd(), 'pictures'),
+      serveRoot: '/pictures',
     }),
     MessagesModule,
     UsersModule,

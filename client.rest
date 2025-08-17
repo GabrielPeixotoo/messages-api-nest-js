@@ -93,3 +93,6 @@ Content-Type: image/jpeg
 
 < ./dev/images/man.png
 ------BoundaryDelimitadorHttp--
+
+### Lista imagens estáticas
+GET {{baseUrl}}/pictures/19.png

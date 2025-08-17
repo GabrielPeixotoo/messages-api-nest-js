@@ -5,6 +5,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { writeFile } from 'fs';
+import { extname, resolve } from 'path';
 import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
 import { HashingService } from 'src/auth/hashing/hash.service';
 import { QueryFailedError, Repository } from 'typeorm';
@@ -69,7 +71,7 @@ export class UsersService {
     return user;
   }
 
-  async update(
+  async updateUser(
     id: number,
     updateUserDto: UpdateUserDto,
     tokenPayload: TokenPayloadDto,
@@ -114,5 +116,35 @@ export class UsersService {
     }
 
     return this.userRepository.remove(user);
+  }
+
+  async uploadPicture(
+    file: Express.Multer.File,
+    tokenPayload: TokenPayloadDto,
+  ) {
+    const fileExtension = extname(file.originalname).toLowerCase().substring(1);
+
+    const fileName = `${tokenPayload.sub}.${fileExtension}`;
+
+    const fileFullPath = resolve(process.cwd(), 'pictures', fileName);
+
+    writeFile(fileFullPath, file.buffer, (err) => {
+      if (err) {
+        console.error('Error saving file:', err);
+        throw new Error('Failed to save file');
+      }
+    });
+
+    const user = await this.findOne(tokenPayload.sub);
+
+    await this.updateUser(
+      user.id,
+      {
+        picture: fileName,
+      },
+      tokenPayload,
+    );
+
+    return user;
   }
 }
