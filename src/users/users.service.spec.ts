@@ -47,11 +47,31 @@ describe('UsersService', () => {
         password: '123456',
       };
 
-      jest.spyOn(hashingService, 'hash').mockResolvedValue('HASHPASSWORD');
+      const passwordHash = 'HASHPASSWORD';
+      const newUser = {
+        id: 1,
+        name: createUserDto.name,
+        passwordHash,
+        email: createUserDto.email,
+        picture: createUserDto.picture,
+      }
 
-      await sut.create(createUserDto);
+      jest.spyOn(hashingService, 'hash').mockResolvedValue(passwordHash);
+      jest.spyOn(userRepository, 'create').mockReturnValue(newUser as any);
+      jest.spyOn(userRepository, 'save').mockResolvedValue(newUser as any);
+
+      const result = await sut.create(createUserDto);
 
       expect(hashingService.hash).toHaveBeenCalledWith(createUserDto.password);
+
+      expect(userRepository.create).toHaveBeenCalledWith({
+        name: createUserDto.name,
+        passwordHash: passwordHash,
+        email: createUserDto.email,
+        picture: createUserDto.picture
+      })
+      expect(userRepository.save).toHaveBeenCalledWith(newUser)
+      expect(result).toEqual(newUser);
     });
   });
 });
