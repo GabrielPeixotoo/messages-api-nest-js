@@ -1,7 +1,8 @@
+import { ConflictException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { HashingService } from 'src/auth/hashing/hash.service';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UsersService } from './users.service';
@@ -73,5 +74,25 @@ describe('UsersService', () => {
       expect(userRepository.save).toHaveBeenCalledWith(newUser)
       expect(result).toEqual(newUser);
     });
+
+    it('Should launch ConflictException when e-mail already exists', async () => {
+
+      const userDto = {
+        email: 'a@a.com',
+        name: 'Gabriel',
+        password: '123456'
+      };
+
+      const error = new QueryFailedError('', [], new Error()) as any;
+      error.code = '23505';
+      jest.spyOn(userRepository, 'save').mockRejectedValue(error)
+
+      await expect(sut.create(userDto)).rejects.toThrow(
+        ConflictException
+      )
+    })
+
   });
+
+
 });
