@@ -92,6 +92,21 @@ describe('UsersService', () => {
       )
     })
 
+    it('Should launch ConflictException when e-mail already exists', async () => {
+
+      const userDto = {
+        email: 'a@a.com',
+        name: 'Gabriel',
+        password: '123456'
+      };
+   
+      jest.spyOn(userRepository, 'save').mockRejectedValue(new Error('Erro genérico'))
+
+      await expect(sut.create(userDto)).rejects.toThrow(
+        new Error('Erro genérico')
+      )
+    })
+
   });
 
 
