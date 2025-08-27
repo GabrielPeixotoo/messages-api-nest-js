@@ -20,7 +20,7 @@ export class UsersService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly hashService: HashingService,
-  ) {}
+  ) { }
 
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     try {
@@ -72,7 +72,7 @@ export class UsersService {
     return user;
   }
 
-  async updateUser(
+  async update(
     id: number,
     updateUserDto: UpdateUserDto,
     tokenPayload: TokenPayloadDto,
@@ -93,7 +93,7 @@ export class UsersService {
     });
 
     if (!user)
-      throw new NotFoundException('Message to be updated was not found');
+      throw new NotFoundException('User to be updated was not found');
 
     if (user.id != tokenPayload.sub) {
       throw new ForbiddenException(
@@ -104,7 +104,7 @@ export class UsersService {
   }
 
   async remove(id: number, tokenPayload: TokenPayloadDto) {
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.findOne(id);
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -138,7 +138,7 @@ export class UsersService {
 
     const user = await this.findOne(tokenPayload.sub);
 
-    await this.updateUser(
+    await this.update(
       user.id,
       {
         picture: fileName,

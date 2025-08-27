@@ -1,18 +1,18 @@
 import {
-  Body,
-  Controller,
-  Delete,
-  FileTypeValidator,
-  Get,
-  MaxFileSizeValidator,
-  Param,
-  ParseFilePipe,
-  ParseIntPipe,
-  Patch,
-  Post,
-  UploadedFile,
-  UseGuards,
-  UseInterceptors,
+    Body,
+    Controller,
+    Delete,
+    FileTypeValidator,
+    Get,
+    MaxFileSizeValidator,
+    Param,
+    ParseFilePipe,
+    ParseIntPipe,
+    Patch,
+    Post,
+    UploadedFile,
+    UseGuards,
+    UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
@@ -48,7 +48,7 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.usersService.updateUser(id, updateUserDto, tokenPayload);
+    return this.usersService.update(id, updateUserDto, tokenPayload);
   }
 
   @UseGuards(AuthTokenGuard)
