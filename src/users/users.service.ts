@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { writeFile } from 'fs';
+import * as fs from 'fs/promises';
 import { extname, resolve } from 'path';
 import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
 import { HashingService } from 'src/auth/hashing/hash.service';
@@ -125,12 +125,7 @@ export class UsersService {
 
     const fileFullPath = resolve(process.cwd(), 'pictures', fileName);
 
-    writeFile(fileFullPath, file.buffer, (err) => {
-      if (err) {
-        console.error('Error saving file:', err);
-        throw new Error('Failed to save file');
-      }
-    });
+    await fs.writeFile(fileFullPath, file.buffer);
 
     const user = await this.findOne(tokenPayload.sub);
 

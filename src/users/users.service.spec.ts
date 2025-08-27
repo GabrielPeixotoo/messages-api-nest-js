@@ -1,6 +1,8 @@
 import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import * as fs from 'node:fs/promises';
+import { resolve } from 'node:path';
 import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
 import { HashingService } from 'src/auth/hashing/hash.service';
 import { QueryFailedError, Repository } from 'typeorm';
@@ -283,8 +285,6 @@ describe('UsersService', () => {
   })
 
   describe('remove', () => {
-
-
     it('Should remove user if it is authorized', async () => {
 
       const userId = 1;
@@ -335,5 +335,38 @@ describe('UsersService', () => {
         )
       );
     });
+  })
+
+  describe('uploadPicture', () => {
+    it('Should upload picture successfully', async () => {
+
+      const file = {
+        originalname: 'test.png',
+        size: 2000,
+        buffer: Buffer.from('file content'),
+      } as Express.Multer.File;
+
+      const tokenPayload = { sub: 1 } as any;
+      const foundUser = { id: 1, name: 'Gabriel' } as UserEntity;
+
+      const fileName = `${tokenPayload.sub}.png`;
+      const fileFullPath = resolve(process.cwd(), 'pictures', fileName);
+
+      jest.spyOn(sut, 'findOne').mockResolvedValue(foundUser);
+      jest.spyOn(userRepository, 'save').mockResolvedValue({
+        ...foundUser,
+        picture: fileName,
+      } as any);
+      jest.spyOn(userRepository, 'preload').mockResolvedValue({
+        ...foundUser,
+        picture: fileName,
+      } as any);
+
+      const writeFileSpy = jest.spyOn(fs, 'writeFile').mockResolvedValue();
+
+      await sut.uploadPicture(file, tokenPayload);
+
+      expect(writeFileSpy).toHaveBeenCalledWith(fileFullPath, file.buffer);
+    })
   })
 });
