@@ -67,7 +67,7 @@ export class UsersService {
       },
     });
 
-    if (!user) throw new NotFoundException('Usuário não encontrado');
+    if (!user) throw new NotFoundException('User not found');
 
     return user;
   }
@@ -105,10 +105,6 @@ export class UsersService {
 
   async remove(id: number, tokenPayload: TokenPayloadDto) {
     const user = await this.findOne(id);
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
 
     if (user.id != tokenPayload.sub) {
       throw new ForbiddenException(

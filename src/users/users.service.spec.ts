@@ -137,7 +137,7 @@ describe('UsersService', () => {
     })
 
     it('Should throw NotFoundException when an user is not found', async () => {
-      await expect(sut.findOne(1)).rejects.toThrow(new NotFoundException('Usuário não encontrado'));
+      await expect(sut.findOne(1)).rejects.toThrow(new NotFoundException('User not found'));
     })
   })
 
@@ -159,7 +159,7 @@ describe('UsersService', () => {
     })
 
     it('Should throw NotFoundException when an user is not found', async () => {
-      await expect(sut.findOne(1)).rejects.toThrow(new NotFoundException('Usuário não encontrado'));
+      await expect(sut.findOne(1)).rejects.toThrow(new NotFoundException('User not found'));
     })
   })
 
@@ -283,6 +283,8 @@ describe('UsersService', () => {
   })
 
   describe('remove', () => {
+
+
     it('Should remove user if it is authorized', async () => {
 
       const userId = 1;
@@ -309,6 +311,29 @@ describe('UsersService', () => {
       expect(sut.findOne).toHaveBeenCalledWith(userId);
       expect(userRepository.remove).toHaveBeenCalledWith(existingUser);
       expect(result).toEqual(existingUser);
+    });
+
+    it('Should throw NotFoundException if user is not found', async () => {
+
+      await expect(sut.remove(1, { sub: 1 } as any)).rejects.toThrow(
+        new NotFoundException('User not found')
+      );
+    });
+
+    it('Should throw ForbiddenException if user is not the one being removed', async () => {
+      const userId = 1;
+
+      const existingUser = {
+        id: userId + 1,
+        name: 'John Doe',
+      };
+
+      jest.spyOn(sut, 'findOne').mockResolvedValue(existingUser as any);
+      await expect(sut.remove(1, { sub: userId } as any)).rejects.toThrow(
+        new ForbiddenException(
+          'User is not the one that you are trying to delete.',
+        )
+      );
     });
   })
 });
