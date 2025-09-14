@@ -365,9 +365,14 @@ describe('UsersService', () => {
       } as any);
 
 
-      await sut.uploadPicture(file, tokenPayload);
+      const result = await sut.uploadPicture(file, tokenPayload);
 
       expect(fs.writeFile).toHaveBeenCalledWith(fileFullPath, file.buffer);
+      expect(userRepository.save).toHaveBeenCalledWith({
+        ...foundUser,
+        picture: fileName,
+      });
+
     })
   })
 });
