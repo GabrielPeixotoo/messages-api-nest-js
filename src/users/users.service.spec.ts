@@ -1,7 +1,7 @@
 import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import * as fs from 'node:fs/promises';
+import * as fs from 'fs/promises';
 import { resolve } from 'node:path';
 import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
 import { HashingService } from 'src/auth/hashing/hash.service';
@@ -9,6 +9,8 @@ import { QueryFailedError, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UsersService } from './users.service';
+
+jest.mock('fs/promises')
 
 describe('UsersService', () => {
   let sut: UsersService;
@@ -362,11 +364,10 @@ describe('UsersService', () => {
         picture: fileName,
       } as any);
 
-      const writeFileSpy = jest.spyOn(fs, 'writeFile').mockResolvedValue();
 
       await sut.uploadPicture(file, tokenPayload);
 
-      expect(writeFileSpy).toHaveBeenCalledWith(fileFullPath, file.buffer);
+      expect(fs.writeFile).toHaveBeenCalledWith(fileFullPath, file.buffer);
     })
   })
 });
