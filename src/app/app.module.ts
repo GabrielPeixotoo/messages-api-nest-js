@@ -1,18 +1,16 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
 import * as Joi from 'joi';
 
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { resolve } from 'path';
 import { AuthModule } from 'src/auth/auth.module';
-import { IsAdminGuard } from 'src/common/guards/is.admin.guard';
 import { MessagesModule } from 'src/messages/messages.module';
 import { UsersModule } from 'src/users/users.module';
-import appConfig from './app.config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import appConfig from './config/app.config';
 
 @Module({
   imports: [
@@ -54,11 +52,6 @@ import { AppService } from './app.service';
   controllers: [AppController],
   providers: [
     AppService,
-
-    {
-      provide: APP_GUARD,
-      useClass: IsAdminGuard,
-    },
   ],
 })
-export class AppModule {}
+export class AppModule { }
