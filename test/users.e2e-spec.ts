@@ -1,14 +1,14 @@
-import { INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { App } from 'supertest/types';
-
 import { resolve } from 'path';
 import pipesConfig from 'src/app/config/pipes.config';
 import { AuthModule } from 'src/auth/auth.module';
 import { MessagesModule } from 'src/messages/messages.module';
 import { UsersModule } from 'src/users/users.module';
+import * as request from 'supertest';
+import { App } from 'supertest/types';
 
 describe('AppController (e2e)', () => {
     let app: INestApplication<App>;
@@ -46,7 +46,29 @@ describe('AppController (e2e)', () => {
         await app.close();
     })
 
-    it('/ (GET)', () => {
+    describe('/users (POST)', () => {
 
+        it('Should create an user successfully', async () => {
+            const createUserDto = {
+                email: 'a@a.com',
+                name: 'Gabriel Peixoto',
+                password: '123456'
+            };
+            const response = await request(app.getHttpServer()).post('/users').send(createUserDto).expect(HttpStatus.CREATED)
+            expect(response.body).toEqual(
+                {
+
+                    email: createUserDto.email,
+                    passwordHash: expect.any(String),
+                    name: createUserDto.name,
+                    active: true,
+                    createdAt: expect.any(String),
+                    updatedAt: expect.any(String),
+                    picture: '',
+                    id: expect.any(Number),
+                    routePolicies: []
+                }
+            )
+        });
     });
 });

@@ -45,6 +45,9 @@ export class UserEntity {
   @Column({ default: true })
   active: boolean;
 
-  @Column({ type: 'simple-array', default: [] })
+  @Column({
+    type: 'jsonb',
+    default: [],
+  })
   routePolicies: RoutePolicies[];
 }
