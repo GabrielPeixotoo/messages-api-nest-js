@@ -2,7 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 
+import { APP_GUARD } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { resolve } from 'path';
 import { AuthModule } from 'src/auth/auth.module';
@@ -14,6 +16,17 @@ import appConfig from './config/app.config';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 10,
+          blockDuration: 5000,
+        }
+      ],
+
+    }
+    ),
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV ?? 'development'}`,
       load: [appConfig],
@@ -52,6 +65,10 @@ import appConfig from './config/app.config';
   controllers: [AppController],
   providers: [
     AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule { }

@@ -6,7 +6,7 @@
 ### Lista todos os recados
 GET {{baseUrl}}/messages/?limit=10&offset=0
 ### Lista apenas um recado
-GET {{baseUrl}}/messages/3
+GET {{baseUrl}}/messages/13
 ### Cria um recado
 POST {{baseUrl}}/messages
 Authorization: Bearer {{accessToken}}
