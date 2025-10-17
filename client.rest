@@ -37,7 +37,7 @@ Authorization: Bearer {{accessToken}}
 GET {{baseUrl}}/users/?limit={{$randomInt 1 100}}&offset={{$randomInt 0 100}}
 Authorization: Bearer {{accessToken}}
 ### Lista apenas um Usuário
-GET {{baseUrl}}/users/14
+GET {{baseUrl}}/users/19
 Authorization: Bearer {{accessToken}}
 ### Cria um Usuário
 POST {{baseUrl}}/users
@@ -50,12 +50,13 @@ Content-Type: application/json
   }
 
 ### Atualiza um User
-PATCH {{baseUrl}}/users/18
+PATCH {{baseUrl}}/users/19
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
   {
-    "name": "Gabriel luiz"
+    "name": "Gabriel campos",
+    "password" : "123456"
    }
 
 ### Apaga um recado

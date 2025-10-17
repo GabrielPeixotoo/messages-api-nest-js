@@ -89,7 +89,7 @@ export class UsersService {
 
     const user = await this.userRepository.preload({
       id,
-      ...updateUserDto,
+      ...userData,
     });
 
     if (!user)
