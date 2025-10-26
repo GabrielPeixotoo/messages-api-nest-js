@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { EmailService } from 'src/email/email_service';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { CreateMessageDto } from './dto/create-message.dto';
@@ -21,7 +22,8 @@ export class MessagesService {
     @InjectRepository(MessageReceiverEntity)
     private readonly receiverRepository: Repository<MessageReceiverEntity>,
     private readonly usersService: UsersService,
-  ) {}
+    private readonly emailService: EmailService,
+  ) { }
 
   throwNotFoundError(message: string) {
     throw new NotFoundException(message);
@@ -54,8 +56,6 @@ export class MessagesService {
     const { receiversId, text } = createMessageDto;
 
     const from = await this.usersService.findOne(tokenPayload.sub);
-    console.log(tokenPayload);
-    console.log(from);
 
     const message = this.messageRepository.create({
       text,
@@ -67,6 +67,12 @@ export class MessagesService {
     const receivers = await Promise.all(
       receiversId.map(async (id) => {
         const receiver = await this.usersService.findOne(id);
+
+        await this.emailService.sendEmail(
+          receiver.email,
+          `Vc recebeu um recado de ${from.name}`,
+          createMessageDto.text
+        );
         return this.receiverRepository.create({
           receiver,
           message: savedMessage,

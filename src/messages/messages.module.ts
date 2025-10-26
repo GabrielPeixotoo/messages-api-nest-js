@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RemoveSpacesRegex } from 'src/common/regex/remove-spaces.regex';
+import { EmailModule } from 'src/email/email_module';
 import { UsersModule } from 'src/users/users.module';
 import { MessageEntity } from './entities/message.entity';
 import { MessageReceiverEntity } from './entities/message.receiver.entity';
@@ -12,6 +13,7 @@ import { MessagesService } from './messages.service';
   imports: [
     TypeOrmModule.forFeature([MessageEntity, MessageReceiverEntity]),
     UsersModule,
+    EmailModule,
   ],
   controllers: [MessagesController],
   providers: [
@@ -22,4 +24,4 @@ import { MessagesService } from './messages.service';
     },
   ],
 })
-export class MessagesModule {}
+export class MessagesModule { }

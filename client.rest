@@ -14,7 +14,7 @@ Content-Type: application/json
 
   {
     "text": "Recado novo para testar JWT",
-    "receiversId": [16, 14]
+    "receiversId": [19, 18]
   }
 
 ### Atualiza um recado
@@ -32,7 +32,7 @@ Authorization: Bearer {{accessToken}}
 
 
 
-#Messages
+#Users
 ### Lista todos os Usuários
 GET {{baseUrl}}/users/?limit={{$randomInt 1 100}}&offset={{$randomInt 0 100}}
 Authorization: Bearer {{accessToken}}
