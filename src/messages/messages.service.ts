@@ -10,6 +10,7 @@ import { EmailService } from 'src/email/email_service';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { MessageDto } from './dto/message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { MessageEntity } from './entities/message.entity';
 import { MessageReceiverEntity } from './entities/message.receiver.entity';
@@ -29,15 +30,17 @@ export class MessagesService {
     throw new NotFoundException(message);
   }
 
-  async findAll(paginationDto?: PaginationDto): Promise<MessageEntity[]> {
+  async findAll(paginationDto?: PaginationDto): Promise<MessageDto[]> {
     const { limit = 10, offset = 0 } = paginationDto ?? {};
-    return this.messageRepository.find({
+    const messages = await this.messageRepository.find({
       take: limit,
       skip: offset,
       relations: ['from', 'receivers', 'receivers.receiver'],
       order: { id: 'desc' },
     });
+    return messages.map(message => MessageEntity.toDto(message));
   }
+
   async findOne(id: number) {
     const message = await this.messageRepository.findOne({
       where: { id },

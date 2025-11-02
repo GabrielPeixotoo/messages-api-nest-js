@@ -12,6 +12,7 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { SetRoutePolicy } from 'src/auth/decorators/set-route-policy.decorator';
 import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
 import { RoutePolicies } from 'src/auth/enum/route-policies.enum';
@@ -25,6 +26,7 @@ import { TimingConnectionInterceptor } from 'src/common/interceptors/timing-conn
 import { ParseIntIdPipe } from 'src/common/pipes/parse-int-id.pipe';
 import { RemoveSpacesRegex } from 'src/common/regex/remove-spaces.regex';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { MessageDto } from './dto/message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { MessageEntity } from './entities/message.entity';
 import { REMOVE_SPACES_REGEX } from './messages.constants';
@@ -34,18 +36,19 @@ import { MessagesService } from './messages.service';
 @UsePipes(ParseIntIdPipe)
 @UseInterceptors(AddHeaderInterceptor, TimingConnectionInterceptor)
 @UseGuards(RoutePolicyGuard)
+@ApiBearerAuth()
 export class MessagesController {
   constructor(
     private readonly messagesService: MessagesService,
     @Inject(REMOVE_SPACES_REGEX)
     private readonly removeSpacesRegex: RemoveSpacesRegex,
-  ) {}
+  ) { }
   @Get()
   @SetRoutePolicy(RoutePolicies.findAllMessages)
   findAll(
     @Query() paginationDto: PaginationDto,
     @UrlParam() url: string,
-  ): Promise<MessageEntity[]> {
+  ): Promise<MessageDto[]> {
     console.log(url);
     console.log(this.removeSpacesRegex.execute('Remove os espacos'));
     return this.messagesService.findAll(paginationDto);

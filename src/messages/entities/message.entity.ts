@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { MessageDto } from '../dto/message.dto';
 import { MessageReceiverEntity } from './message.receiver.entity';
 
 @Entity('messages')
@@ -38,4 +39,16 @@ export class MessageEntity {
 
   @UpdateDateColumn()
   updatedAt?: Date;
+
+  static toDto(message: MessageEntity): MessageDto {
+    return {
+      id: message.id,
+      text: message.text,
+      fromId: message.from?.id,
+      receiverIds: message.receivers?.map((r) => r.id) || [],
+      date: message.date,
+      createdAt: message.createdAt,
+      updatedAt: message.updatedAt,
+    };
+  }
 }
