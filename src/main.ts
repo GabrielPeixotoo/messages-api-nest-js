@@ -12,7 +12,7 @@ async function bootstrap() {
   if (process.env.NODE_ENV === 'production') {
     app.use(helmet());
     app.enableCors({
-      origin: 'https://meuapp.com.br'
+      origin: process.env.CORS_ORIGIN || 'https://example.com'
     })
   }
 

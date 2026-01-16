@@ -1,99 +1,257 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 📨 Messages API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Uma API REST moderna e completa desenvolvida com **NestJS** para gerenciamento de mensagens entre usuários, com sistema de autenticação JWT, upload de imagens e notificações por email.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Tecnologias
 
-## Description
+- **[NestJS](https://nestjs.com/)** - Framework Node.js progressivo
+- **[TypeScript](https://www.typescriptlang.org/)** - Linguagem de programação
+- **[TypeORM](https://typeorm.io/)** - ORM para banco de dados
+- **[PostgreSQL](https://www.postgresql.org/)** - Banco de dados relacional
+- **[JWT](https://jwt.io/)** - Autenticação e autorização
+- **[Swagger](https://swagger.io/)** - Documentação interativa da API
+- **[bcrypt](https://www.npmjs.com/package/bcrypt)** - Hash de senhas
+- **[Nodemailer](https://nodemailer.com/)** - Envio de emails
+- **[Helmet](https://helmetjs.github.io/)** - Segurança HTTP
+- **[Throttler](https://docs.nestjs.com/security/rate-limiting)** - Rate limiting
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## ✨ Funcionalidades
 
-## Project setup
+### 🔐 Autenticação
+- Login com email e senha
+- Geração de tokens JWT (access token e refresh token)
+- Renovação automática de tokens
+- Guards para proteção de rotas
+- Sistema de políticas de acesso (Route Policies)
 
+### 👥 Usuários
+- Criação de conta
+- Listagem de usuários
+- Busca de usuário por ID
+- Atualização de perfil (apenas próprio usuário)
+- Exclusão de conta (apenas própria conta)
+- Upload de foto de perfil (PNG, máximo 10MB)
+- Validação de dados com class-validator
+
+### 💬 Mensagens
+- Envio de mensagens para múltiplos destinatários
+- Listagem paginada de mensagens
+- Busca de mensagem específica
+- Atualização de mensagens (apenas do próprio autor)
+- Exclusão de mensagens (apenas do próprio autor)
+- Relacionamento entre remetente e destinatários
+
+### 📧 Email
+- Integração com serviço de email (Nodemailer)
+- Notificações automáticas
+
+### 🛡️ Segurança
+- Rate limiting (10 requisições por minuto)
+- Helmet para headers de segurança
+- CORS configurável por ambiente
+- Validação de dados de entrada
+- Hash de senhas com bcrypt
+- Proteção contra SQL injection (TypeORM)
+
+### 📚 Documentação
+- Swagger UI disponível em `/docs`
+- Documentação interativa de todos os endpoints
+- Autenticação Bearer Token integrada
+
+## 📋 Pré-requisitos
+
+- Node.js 20+ ([nvm](https://github.com/nvm-sh/nvm) recomendado)
+- PostgreSQL 12+
+- npm ou yarn
+
+## 🔧 Instalação
+
+1. **Clone o repositório**
 ```bash
-$ npm install
+git clone https://github.com/seu-usuario/nest_messages_api.git
+cd nest_messages_api
 ```
 
-## Compile and run the project
-
+2. **Instale as dependências**
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+3. **Configure o banco de dados PostgreSQL**
+```sql
+CREATE USER seu_usuario WITH ENCRYPTED PASSWORD 'sua_senha';
+CREATE DATABASE nome_database WITH OWNER seu_usuario;
+GRANT ALL PRIVILEGES ON DATABASE nome_database TO seu_usuario;
 ```
 
-## Deployment
+4. **Configure as variáveis de ambiente**
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Crie um arquivo `.env.development` na raiz do projeto:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+```env
+# Database
+DATABASE_TYPE=postgres
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USERNAME=seu_usuario
+DATABASE=nome_database
+DATABASE_PASSWORD=sua_senha
+DATABASE_AUTOLOAD_ENTITIES=true
+DATABASE_SYNCHRONIZE=true
 
-```bash
-$ npm install -g mau
-$ mau deploy
+# JWT
+JWT_SECRET=seu_jwt_secret_super_seguro_aqui
+JWT_TOKEN_AUDIENCE=http://localhost:3000
+JWT_TOKEN_ISSUER=http://localhost:3000
+JWT_TOKEN_EXPIRATION_TIME=3600
+JWT_REFRESH_TTL=86400
+
+# Application
+APP_PORT=3000
+NODE_ENV=development
+CORS_ORIGIN=https://seu-dominio.com.br  # Apenas para produção
+
+# Email (opcional)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USERNAME=seu_email@gmail.com
+EMAIL_PASSWORD=sua_senha_app
+EMAIL_SECURE=false
+EMAIL_FROM=noreply@example.com
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+> ⚠️ **Importante**: Em produção, defina `DATABASE_SYNCHRONIZE=false` e use migrations do TypeORM.
 
-## Resources
+## 🏃 Executando a aplicação
 
-Check out a few resources that may come in handy when working with NestJS:
+### Desenvolvimento
+```bash
+npm run start:dev
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+A aplicação estará disponível em `http://localhost:3000`
 
-## Support
+### Produção
+```bash
+npm run build
+npm run start:prod
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Debug
+```bash
+npm run start:debug
+```
 
-## Stay in touch
+## 📖 Documentação da API
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Após iniciar a aplicação, acesse a documentação Swagger em:
+```
+http://localhost:3000/docs
+```
 
-## License
+A documentação inclui:
+- Todos os endpoints disponíveis
+- Parâmetros de entrada e saída
+- Exemplos de requisições
+- Autenticação Bearer Token integrada
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 🧪 Testes
+
+```bash
+# Testes unitários
+npm run test
+
+# Testes em modo watch
+npm run test:watch
+
+# Cobertura de testes
+npm run test:cov
+
+# Testes end-to-end
+npm run test:e2e
+```
+
+## 📁 Estrutura do Projeto
+
+```
+src/
+├── app/              # Módulo principal e configurações
+├── auth/             # Autenticação e autorização
+│   ├── guards/       # Guards de autenticação
+│   ├── hashing/      # Serviço de hash de senhas
+│   └── decorators/   # Decorators customizados
+├── users/            # Módulo de usuários
+├── messages/         # Módulo de mensagens
+├── email/            # Serviço de email
+├── common/           # Recursos compartilhados
+│   ├── decorators/   # Decorators comuns
+│   ├── dto/          # DTOs compartilhados
+│   ├── filters/      # Exception filters
+│   ├── guards/       # Guards comuns
+│   ├── interceptors/ # Interceptors
+│   ├── pipes/        # Pipes de validação
+│   └── regex/        # Utilitários de regex
+└── main.ts           # Arquivo de inicialização
+```
+
+## 🔑 Endpoints Principais
+
+### Autenticação
+- `POST /auth` - Login
+- `POST /auth/refresh` - Renovar token
+
+### Usuários
+- `POST /users` - Criar usuário
+- `GET /users` - Listar usuários
+- `GET /users/:id` - Buscar usuário (autenticado)
+- `PATCH /users/:id` - Atualizar usuário (próprio)
+- `DELETE /users/:id` - Deletar usuário (próprio)
+- `POST /users/upload-picture` - Upload de foto (autenticado)
+
+### Mensagens
+- `GET /messages` - Listar mensagens (paginado)
+- `GET /messages/:id` - Buscar mensagem
+- `POST /messages` - Criar mensagem (autenticado)
+- `PATCH /messages/:id` - Atualizar mensagem (autor)
+- `DELETE /messages/:id` - Deletar mensagem (autor)
+
+## 🎯 Recursos Técnicos Implementados
+
+- ✅ Arquitetura modular (NestJS)
+- ✅ Injeção de dependências
+- ✅ Validação de dados com DTOs
+- ✅ Transformação de dados
+- ✅ Exception filters customizados
+- ✅ Interceptors (timing, headers)
+- ✅ Guards de autenticação e autorização
+- ✅ Pipes customizados
+- ✅ Rate limiting
+- ✅ Upload de arquivos
+- ✅ Serviço estático de imagens
+- ✅ Configuração por ambiente
+- ✅ Validação de variáveis de ambiente (Joi)
+- ✅ Documentação automática (Swagger)
+- ✅ Testes unitários e E2E
+- ✅ TypeScript strict mode
+
+## 🔒 Segurança
+
+- Senhas hasheadas com bcrypt
+- Tokens JWT com expiração
+- Rate limiting para prevenir abuso
+- Helmet para headers de segurança
+- Validação rigorosa de entrada
+- CORS configurável
+- Guards para proteção de rotas
+
+## 📝 Licença
+
+Este projeto é privado e não possui licença pública.
+
+## 👨‍💻 Autor
+
+**Gabriel Campos Peixoto**
+
+---
+
+⭐ Se este projeto foi útil para você, considere dar uma estrela no repositório!
