@@ -1,257 +1,290 @@
-# 📨 Messages API
+# Messages API
 
-Uma API REST moderna e completa desenvolvida com **NestJS** para gerenciamento de mensagens entre usuários, com sistema de autenticação JWT, upload de imagens e notificações por email.
+A modern REST API built with **NestJS** for sending and managing messages between users. It includes JWT authentication, profile picture upload, and email notifications. Suitable for internal announcements, notifications, or simple messaging flows (one sender, multiple recipients, read receipts).
 
-## 🚀 Tecnologias
+---
 
-- **[NestJS](https://nestjs.com/)** - Framework Node.js progressivo
-- **[TypeScript](https://www.typescriptlang.org/)** - Linguagem de programação
-- **[TypeORM](https://typeorm.io/)** - ORM para banco de dados
-- **[PostgreSQL](https://www.postgresql.org/)** - Banco de dados relacional
-- **[JWT](https://jwt.io/)** - Autenticação e autorização
-- **[Swagger](https://swagger.io/)** - Documentação interativa da API
-- **[bcrypt](https://www.npmjs.com/package/bcrypt)** - Hash de senhas
-- **[Nodemailer](https://nodemailer.com/)** - Envio de emails
-- **[Helmet](https://helmetjs.github.io/)** - Segurança HTTP
-- **[Throttler](https://docs.nestjs.com/security/rate-limiting)** - Rate limiting
+## Project overview
 
-## ✨ Funcionalidades
+This API lets authenticated users **send messages to one or more recipients** and tracks read status per recipient. It is **notification/broadcast-style** rather than chat: each message is a standalone send with a list of receivers and an `isRead` flag per receiver (no conversation threads or reply chains).
 
-### 🔐 Autenticação
-- Login com email e senha
-- Geração de tokens JWT (access token e refresh token)
-- Renovação automática de tokens
-- Guards para proteção de rotas
-- Sistema de políticas de acesso (Route Policies)
+**Domain modules:**
 
-### 👥 Usuários
-- Criação de conta
-- Listagem de usuários
-- Busca de usuário por ID
-- Atualização de perfil (apenas próprio usuário)
-- Exclusão de conta (apenas própria conta)
-- Upload de foto de perfil (PNG, máximo 10MB)
-- Validação de dados com class-validator
+- **Auth** — Login, JWT (access + refresh), route protection, and route policies.
+- **Users** — CRUD, profile picture upload, and ownership rules (users can only update/delete their own data).
+- **Messages** — Create, list (paginated), get, update, and delete messages; one sender, many receivers; read status stored in a join table.
 
-### 💬 Mensagens
-- Envio de mensagens para múltiplos destinatários
-- Listagem paginada de mensagens
-- Busca de mensagem específica
-- Atualização de mensagens (apenas do próprio autor)
-- Exclusão de mensagens (apenas do próprio autor)
-- Relacionamento entre remetente e destinatários
+**Architecture:**
 
-### 📧 Email
-- Integração com serviço de email (Nodemailer)
-- Notificações automáticas
+- **Modular NestJS:** Controllers → Services → TypeORM entities; dependency injection; domain modules (Auth, Users, Messages, Email).
+- **Cross-cutting:** Global validation pipe (DTOs + class-validator), guards (JWT + route policy), interceptors (timing, headers), throttler (rate limit). Config loaded by environment (`.env.development`, `.env.production`, `.env.test`) and validated with Joi.
+- **Database:** PostgreSQL with TypeORM. Three main entities: `users`, `messages`, and `message_receivers` (join table between message and users for recipients + `isRead` per recipient).
 
-### 🛡️ Segurança
-- Rate limiting (10 requisições por minuto)
-- Helmet para headers de segurança
-- CORS configurável por ambiente
-- Validação de dados de entrada
-- Hash de senhas com bcrypt
-- Proteção contra SQL injection (TypeORM)
+---
 
-### 📚 Documentação
-- Swagger UI disponível em `/docs`
-- Documentação interativa de todos os endpoints
-- Autenticação Bearer Token integrada
+## Tech stack
 
-## 📋 Pré-requisitos
+| Area | Technology |
+|------|------------|
+| Runtime | Node.js 20+ |
+| Language | TypeScript (strict mode) |
+| Framework | [NestJS](https://nestjs.com/) |
+| ORM | [TypeORM](https://typeorm.io/) |
+| Database | [PostgreSQL](https://www.postgresql.org/) |
+| Auth | [JWT](https://jwt.io/) (access + refresh) |
+| Validation | [class-validator](https://github.com/class-validator/class-validator) + DTOs |
+| Docs | [Swagger](https://swagger.io/) (OpenAPI) |
+| Security | [Helmet](https://helmetjs.github.io/), [Throttler](https://docs.nestjs.com/security/rate-limiting), bcrypt |
+| Email | [Nodemailer](https://nodemailer.com/) |
+| Tests | Jest, Supertest (unit + E2E) |
 
-- Node.js 20+ ([nvm](https://github.com/nvm-sh/nvm) recomendado)
+---
+
+## Features
+
+### Authentication
+- Login with email and password
+- JWT access and refresh tokens
+- Token refresh endpoint
+- Guards for protected routes
+- Route policies (extensible for future RBAC)
+
+### Users
+- Sign up and list users
+- Get user by ID (authenticated)
+- Update and delete own profile
+- Profile picture upload (PNG, max 10MB)
+- Input validation via DTOs
+
+### Messages
+- Send a message to multiple recipients
+- Paginated message list
+- Get, update, and delete own messages
+- Sender and recipients modeled via `messages` + `message_receivers` (read status per recipient)
+
+### Email
+- Nodemailer integration
+- Optional email notifications (e.g. when a message is sent)
+
+### Security
+- Rate limiting (10 requests per minute, configurable)
+- Helmet for secure HTTP headers (production)
+- CORS configurable per environment
+- bcrypt password hashing
+- Input validation and parameter pipes
+- SQL injection mitigation via TypeORM parameterized queries
+
+### Documentation
+- Swagger UI at `/docs`
+- Bearer token auth in Swagger
+- Request/response schemas for main endpoints
+
+---
+
+## Prerequisites
+
+- Node.js 20+ ([nvm](https://github.com/nvm-sh/nvm) recommended)
 - PostgreSQL 12+
-- npm ou yarn
+- npm or yarn
 
-## 🔧 Instalação
+---
 
-1. **Clone o repositório**
-```bash
-git clone https://github.com/seu-usuario/nest_messages_api.git
-cd nest_messages_api
-```
+## Installation
 
-2. **Instale as dependências**
-```bash
-npm install
-```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/nest_messages_api.git
+   cd nest_messages_api
+   ```
 
-3. **Configure o banco de dados PostgreSQL**
-```sql
-CREATE USER seu_usuario WITH ENCRYPTED PASSWORD 'sua_senha';
-CREATE DATABASE nome_database WITH OWNER seu_usuario;
-GRANT ALL PRIVILEGES ON DATABASE nome_database TO seu_usuario;
-```
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-4. **Configure as variáveis de ambiente**
+3. **Set up PostgreSQL**
+   ```sql
+   CREATE USER your_user WITH ENCRYPTED PASSWORD 'your_password';
+   CREATE DATABASE your_database WITH OWNER your_user;
+   GRANT ALL PRIVILEGES ON DATABASE your_database TO your_user;
+   ```
 
-Crie um arquivo `.env.development` na raiz do projeto:
+4. **Environment variables**
 
-```env
-# Database
-DATABASE_TYPE=postgres
-DATABASE_HOST=localhost
-DATABASE_PORT=5432
-DATABASE_USERNAME=seu_usuario
-DATABASE=nome_database
-DATABASE_PASSWORD=sua_senha
-DATABASE_AUTOLOAD_ENTITIES=true
-DATABASE_SYNCHRONIZE=true
+   Create `.env.development` in the project root:
 
-# JWT
-JWT_SECRET=seu_jwt_secret_super_seguro_aqui
-JWT_TOKEN_AUDIENCE=http://localhost:3000
-JWT_TOKEN_ISSUER=http://localhost:3000
-JWT_TOKEN_EXPIRATION_TIME=3600
-JWT_REFRESH_TTL=86400
+   ```env
+   # Database
+   DATABASE_TYPE=postgres
+   DATABASE_HOST=localhost
+   DATABASE_PORT=5432
+   DATABASE_USERNAME=your_user
+   DATABASE=your_database
+   DATABASE_PASSWORD=your_password
+   DATABASE_AUTOLOAD_ENTITIES=true
+   DATABASE_SYNCHRONIZE=true
 
-# Application
-APP_PORT=3000
-NODE_ENV=development
-CORS_ORIGIN=https://seu-dominio.com.br  # Apenas para produção
+   # JWT
+   JWT_SECRET=your_secure_jwt_secret
+   JWT_TOKEN_AUDIENCE=http://localhost:3000
+   JWT_TOKEN_ISSUER=http://localhost:3000
+   JWT_TOKEN_EXPIRATION_TIME=3600
+   JWT_REFRESH_TTL=86400
 
-# Email (opcional)
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USERNAME=seu_email@gmail.com
-EMAIL_PASSWORD=sua_senha_app
-EMAIL_SECURE=false
-EMAIL_FROM=noreply@example.com
-```
+   # Application
+   APP_PORT=3000
+   NODE_ENV=development
+   CORS_ORIGIN=https://your-frontend.com
 
-> ⚠️ **Importante**: Em produção, defina `DATABASE_SYNCHRONIZE=false` e use migrations do TypeORM.
+   # Email (optional)
+   EMAIL_HOST=smtp.gmail.com
+   EMAIL_PORT=587
+   EMAIL_USERNAME=your_email@gmail.com
+   EMAIL_PASSWORD=your_app_password
+   EMAIL_SECURE=false
+   EMAIL_FROM=noreply@example.com
+   ```
 
-## 🏃 Executando a aplicação
+   > In production, set `DATABASE_SYNCHRONIZE=false` and use TypeORM migrations.
 
-### Desenvolvimento
+---
+
+## Running the app
+
+**Development**
 ```bash
 npm run start:dev
 ```
+API available at `http://localhost:3000`
 
-A aplicação estará disponível em `http://localhost:3000`
-
-### Produção
+**Production**
 ```bash
 npm run build
 npm run start:prod
 ```
 
-### Debug
+**Debug**
 ```bash
 npm run start:debug
 ```
 
-## 📖 Documentação da API
+---
 
-Após iniciar a aplicação, acesse a documentação Swagger em:
-```
-http://localhost:3000/docs
-```
+## API documentation
 
-A documentação inclui:
-- Todos os endpoints disponíveis
-- Parâmetros de entrada e saída
-- Exemplos de requisições
-- Autenticação Bearer Token integrada
+With the app running, open:
 
-## 🧪 Testes
+**http://localhost:3000/docs**
 
-```bash
-# Testes unitários
-npm run test
-
-# Testes em modo watch
-npm run test:watch
-
-# Cobertura de testes
-npm run test:cov
-
-# Testes end-to-end
-npm run test:e2e
-```
-
-## 📁 Estrutura do Projeto
-
-```
-src/
-├── app/              # Módulo principal e configurações
-├── auth/             # Autenticação e autorização
-│   ├── guards/       # Guards de autenticação
-│   ├── hashing/      # Serviço de hash de senhas
-│   └── decorators/   # Decorators customizados
-├── users/            # Módulo de usuários
-├── messages/         # Módulo de mensagens
-├── email/            # Serviço de email
-├── common/           # Recursos compartilhados
-│   ├── decorators/   # Decorators comuns
-│   ├── dto/          # DTOs compartilhados
-│   ├── filters/      # Exception filters
-│   ├── guards/       # Guards comuns
-│   ├── interceptors/ # Interceptors
-│   ├── pipes/        # Pipes de validação
-│   └── regex/        # Utilitários de regex
-└── main.ts           # Arquivo de inicialização
-```
-
-## 🔑 Endpoints Principais
-
-### Autenticação
-- `POST /auth` - Login
-- `POST /auth/refresh` - Renovar token
-
-### Usuários
-- `POST /users` - Criar usuário
-- `GET /users` - Listar usuários
-- `GET /users/:id` - Buscar usuário (autenticado)
-- `PATCH /users/:id` - Atualizar usuário (próprio)
-- `DELETE /users/:id` - Deletar usuário (próprio)
-- `POST /users/upload-picture` - Upload de foto (autenticado)
-
-### Mensagens
-- `GET /messages` - Listar mensagens (paginado)
-- `GET /messages/:id` - Buscar mensagem
-- `POST /messages` - Criar mensagem (autenticado)
-- `PATCH /messages/:id` - Atualizar mensagem (autor)
-- `DELETE /messages/:id` - Deletar mensagem (autor)
-
-## 🎯 Recursos Técnicos Implementados
-
-- ✅ Arquitetura modular (NestJS)
-- ✅ Injeção de dependências
-- ✅ Validação de dados com DTOs
-- ✅ Transformação de dados
-- ✅ Exception filters customizados
-- ✅ Interceptors (timing, headers)
-- ✅ Guards de autenticação e autorização
-- ✅ Pipes customizados
-- ✅ Rate limiting
-- ✅ Upload de arquivos
-- ✅ Serviço estático de imagens
-- ✅ Configuração por ambiente
-- ✅ Validação de variáveis de ambiente (Joi)
-- ✅ Documentação automática (Swagger)
-- ✅ Testes unitários e E2E
-- ✅ TypeScript strict mode
-
-## 🔒 Segurança
-
-- Senhas hasheadas com bcrypt
-- Tokens JWT com expiração
-- Rate limiting para prevenir abuso
-- Helmet para headers de segurança
-- Validação rigorosa de entrada
-- CORS configurável
-- Guards para proteção de rotas
-
-## 📝 Licença
-
-Este projeto é privado e não possui licença pública.
-
-## 👨‍💻 Autor
-
-**Gabriel Campos Peixoto**
+Swagger provides interactive docs, request/response examples, and Bearer token authentication.
 
 ---
 
-⭐ Se este projeto foi útil para você, considere dar uma estrela no repositório!
+## Tests
+
+```bash
+# Unit tests
+npm run test
+
+# Watch mode
+npm run test:watch
+
+# Coverage
+npm run test:cov
+
+# End-to-end (requires PostgreSQL; uses database named `testing`)
+npm run test:e2e
+```
+
+E2E tests use a separate database (`testing`) and `dropSchema: true` for isolation.
+
+---
+
+## Project structure
+
+```
+src/
+├── app/                 # Root module and config
+│   └── config/          # App config, pipes config
+├── auth/                # Authentication and authorization
+│   ├── guards/          # JWT and route-policy guards
+│   ├── hashing/         # Password hashing (bcrypt)
+│   ├── config/          # JWT config
+│   └── decorators/      # Custom decorators
+├── users/               # User CRUD and upload
+├── messages/            # Messages and message_receivers
+├── email/               # Email service (Nodemailer)
+├── common/              # Shared utilities
+│   ├── decorators/
+│   ├── dto/             # e.g. pagination DTO
+│   ├── filters/         # Exception filters
+│   ├── guards/
+│   ├── interceptors/
+│   ├── pipes/
+│   └── regex/
+└── main.ts              # Bootstrap (Helmet, CORS, Swagger)
+```
+
+---
+
+## Main endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/auth` | Login |
+| POST | `/auth/refresh` | Refresh access token |
+| POST | `/users` | Create user |
+| GET | `/users` | List users |
+| GET | `/users/:id` | Get user (authenticated) |
+| PATCH | `/users/:id` | Update own user |
+| DELETE | `/users/:id` | Delete own user |
+| POST | `/users/upload-picture` | Upload profile picture (authenticated) |
+| GET | `/messages` | List messages (paginated) |
+| GET | `/messages/:id` | Get message |
+| POST | `/messages` | Create message (authenticated) |
+| PATCH | `/messages/:id` | Update own message |
+| DELETE | `/messages/:id` | Delete own message |
+
+---
+
+## Implemented practices
+
+- Modular architecture (NestJS)
+- Dependency injection
+- DTOs and validation (class-validator)
+- Global validation pipe (whitelist, transform)
+- Custom exception filters and interceptors
+- Auth and route-policy guards
+- Custom pipes (e.g. ParseIntId)
+- Rate limiting (Throttler)
+- File upload and static file serving
+- Environment-based config (Joi validation)
+- OpenAPI documentation (Swagger)
+- Unit and E2E tests
+- TypeScript strict mode
+
+---
+
+## Security
+
+- Passwords hashed with bcrypt
+- JWT with expiration; refresh token flow
+- Rate limiting to reduce abuse
+- Helmet in production
+- Strict input validation
+- CORS configurable per environment
+- Route protection via guards
+
+---
+
+## License
+
+This project is private and has no public license.
+
+---
+
+## Author
+
+**Gabriel Campos Peixoto**
+
+If you find this useful, consider giving the repo a star.
